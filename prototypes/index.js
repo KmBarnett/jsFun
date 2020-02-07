@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { kitties } = require('./datasets/kitties');
 const { clubs } = require('./datasets/clubs');
 const { mods } = require('./datasets/mods');
@@ -27,21 +29,23 @@ const kittyPrompts = {
 
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    let orangeCats = kitties.filter(kitten => kitten.color === 'orange')
+    const result = orangeCats.map(cat => cat.name);
+    return result
 
     // Annotation:
-    // Write your annotation here as a comment
+    // First I am filtering though the kitties data to find only the orange cats.
+    // Then I am returning a mapped array shoing only the name
   },
 
   sortByAge() {
     // Sort the kitties by their age
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.sort((a, b) => (a.age < b.age) ? 1 : -1);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I am sorting the kitties by decending age
   },
 
   growUp() {
@@ -58,8 +62,13 @@ const kittyPrompts = {
     // },
     // ...etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = kitties.forEach((kitten, i) => {
+      kitten.age += 2
+    });
+
+    return kitties
+
+    // Annotation: looped through and added 2 to each age
   }
 };
 
@@ -88,13 +97,25 @@ const clubPrompts = {
     //   Louisa: ['Drama', 'Art'],
     //   Pam: ['Drama', 'Art', 'Chess'],
     //   ...etc
-    // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let newData = {}
+    clubs.forEach(club => {
+      club.members.forEach((member, i) => {
+        if (!newData[member]) {
+          newData[member]= []
+        }
+        if (newData[member].indexOf(club.club) === -1) {
+          newData[member].push(club.club)
+        }
+      });
+    });
+    const result = newData;
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I created a new object
+    // then I loop Each club and then loop through each member
+    // if a key of that memeber's name exsits it pushes the club in to their array if it isnt in there and if they dont exist it is instansiated
   }
 };
 
@@ -126,11 +147,14 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = mods.map(mod => {
+      return {mod: mod.mod,
+              studentsPerInstructor: mod.students / mod.instructors}
+    })
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I am using the map function to take mods and return a deconstructed object with the key value paits of mod and student per instructor.
   }
 };
 
@@ -161,7 +185,10 @@ const cakePrompts = {
     //    ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.map(cake => {
+      return {flavor: cake.cakeFlavor,
+              inStock: cake.inStock}
+    });
     return result;
 
     // Annotation:
@@ -189,7 +216,7 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.filter(cake => cake.inStock > 0);
     return result;
 
     // Annotation:
@@ -200,19 +227,29 @@ const cakePrompts = {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce((acc, cake) => {
+      acc += cake.inStock
+      return acc
+    },0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Using the reduce function I am Accumulating all th values of cakes that are inStock
   },
 
   allToppings() {
     // Return an array of all unique toppings (no duplicates) needed to bake
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let toppingsList = []
+    cakes.forEach(cake => {
+      cake.toppings.forEach((topping) => {
+        if (toppingsList.indexOf(topping) === -1) {
+          toppingsList.push(topping)
+        }
+      });
+    });
+    const result = toppingsList
     return result;
 
     // Annotation:
@@ -229,12 +266,28 @@ const cakePrompts = {
     //    'berries': 2,
     //    ...etc
     // }
+    let groceryListAmounts = []
+    cakes.forEach(cake => {
+      cake.toppings.forEach((topping) => {
+          groceryListAmounts.push(topping)
+      });
+    });
+    let items = this.allToppings()
+    let groceryList = {}
+    items.forEach((item) => {
+      let amounts = groceryListAmounts.filter(el => el === item)
+      groceryList[item] = amounts.length
+    });
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+    const result = groceryList;
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Im instansiating an object with groceryList
+    // I create a list of ever topping with repeats
+    // I grab my list of toppings with out repeats
+    // then I iteratorate over 
   }
 };
 
