@@ -287,7 +287,7 @@ const cakePrompts = {
     // Im instansiating an object with groceryList
     // I create a list of ever topping with repeats
     // I grab my list of toppings with out repeats
-    // then I iteratorate over 
+    // then I iteratorate over
   }
 };
 
@@ -318,7 +318,7 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.filter(classroom => classroom.program === 'FE');
     return result;
 
     // Annotation:
@@ -333,17 +333,26 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+
+    const result = classrooms.reduce((programCapacitys, program) => {
+      let key = (program.program === 'FE') ? 'feCapacity' : 'beCapacity';
+      programCapacitys[key] += program.capacity
+      return programCapacitys
+    }, {
+      feCapacity: 0,
+      beCapacity: 0,
+    });
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // I am setting up a reduce to have a predifined object then i am determining the key with a terninary and i am += that value by program capacity
   },
 
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let shallowCopy = [...classrooms]
+    const result = shallowCopy.sort((a , b) => a.capacity - b.capacity);
     return result;
 
     // Annotation:
@@ -351,8 +360,8 @@ const classPrompts = {
   }
 };
 
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
+// I am creating a shallow coppy not to mutate the original
+// then i am sorting it by capacity least first
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -368,13 +377,19 @@ const bookPrompts = {
     //   'The Handmaid\'s Tale', 'The Metamorphosis', 'Brave New World', 'Life of Pi',
     //   'The Curious Incident of the Dog in the Night - Time', 'The Bell Jar',
     //   'Catch-22', 'Treasure Island']
+    let rightBooks = books.filter(book => {
+      let isHorror = book.genre === 'Horror';
+      let isTrueCrime = book.genre === 'True Crime';
+      if (!isHorror && !isTrueCrime) {
+        return book
+      }
+    });
 
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = rightBooks.map(book => book.title)
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Im first filtering out the books in horror and true crime array then im maping to make it names
 
   },
   getNewBooks() {
@@ -384,8 +399,13 @@ const bookPrompts = {
     // [{ title: 'Harry Potter and the Sorcerer\'s Stone', year: 1997 },
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
+    let newBooks = books.filter(book => book.published > 1989)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = newBooks.map(book => {
+      return {
+              title: book.title,
+              year: book.published}
+            });
     return result;
 
     // Annotation:
