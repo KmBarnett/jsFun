@@ -100,13 +100,11 @@ const clubPrompts = {
 
     let newData = {}
     clubs.forEach(club => {
-      club.members.forEach((member, i) => {
+      club.members.forEach(member => {
         if (!newData[member]) {
           newData[member]= []
-        }
-        if (newData[member].indexOf(club.club) === -1) {
+        };
           newData[member].push(club.club)
-        }
       });
     });
     const result = newData;
@@ -148,8 +146,10 @@ const modPrompts = {
     // ]
 
     const result = mods.map(mod => {
-      return {mod: mod.mod,
-              studentsPerInstructor: mod.students / mod.instructors}
+      return {
+              mod: mod.mod,
+              studentsPerInstructor: mod.students / mod.instructors
+            }
     })
     return result;
 
@@ -227,10 +227,10 @@ const cakePrompts = {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    const result = cakes.reduce((acc, cake) => {
-      acc += cake.inStock
-      return acc
-    },0);
+    const result = cakes.reduce((stock, cake) => {
+      stock += cake.inStock
+      return stock
+    }, 0);
     return result;
 
     // Annotation:
@@ -244,7 +244,7 @@ const cakePrompts = {
     let toppingsList = []
     cakes.forEach(cake => {
       cake.toppings.forEach((topping) => {
-        if (toppingsList.indexOf(topping) === -1) {
+        if (toppingsList.indexOf(topping) ===  -1) {
           toppingsList.push(topping)
         }
       });
@@ -357,11 +357,12 @@ const classPrompts = {
 
     // Annotation:
     // Write your annotation here as a comment
+    // I am creating a shallow coppy not to mutate the original
+    // then i am sorting it by capacity least first
   }
 };
 
-// I am creating a shallow coppy not to mutate the original
-// then i am sorting it by capacity least first
+
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -409,7 +410,7 @@ const bookPrompts = {
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // again i am filtering the books then maping to change the object
   }
 
 };
@@ -428,7 +429,7 @@ const weatherPrompts = {
     // return an array of all the average temperatures. Eg:
     // [ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.map(day => (day.temperature.high + day.temperature.low) / 2);
     return result;
 
     // Annotation:
@@ -441,8 +442,8 @@ const weatherPrompts = {
     // [ 'Atlanta, Georgia is sunny.',
     // 'New Orleans, Louisiana is sunny.',
     // 'Raleigh, North Carolina is mostly sunny.' ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let sunnySpots = weather.filter( day => day.type.includes('sunny'))
+    const result = sunnySpots.map(day => `${day.location} is ${day.type}.`);
     return result;
 
     // Annotation:
@@ -457,8 +458,9 @@ const weatherPrompts = {
     //   humidity: 84,
     //   temperature: { high: 49, low: 38 }
     // }
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let shallowCopy =[...weather]
+    shallowCopy.sort((a,b) => b.humidity - a.humidity)
+    const result = shallowCopy[0];
     return result;
 
     // Annotation:
@@ -485,7 +487,14 @@ const nationalParksPrompts = {
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
     //}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce((visitedObj, park) => {
+      let key = (!park.visited) ? 'parksToVisit' : 'parksVisited';
+      visitedObj[key].push(park.name)
+      return visitedObj
+    }, {
+      parksToVisit: [],
+      parksVisited: [],
+    });
     return result;
 
     // Annotation:
@@ -502,7 +511,11 @@ const nationalParksPrompts = {
     // { Florida: 'Everglades' } ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.map(park => {
+      return {
+        [park.location]: park.name,
+      }
+    });
     return result;
 
     // Annotation:
@@ -525,7 +538,18 @@ const nationalParksPrompts = {
     //   'backpacking',
     //   'rock climbing' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let allActivities = [];
+    nationalParks.forEach(park => {
+      park.activities.forEach(activitie => {
+        if (!allActivities.includes(activitie)) {
+          allActivities.push(activitie);
+        }
+      });
+
+    });
+
+
+    const result = allActivities;
     return result;
 
     // Annotation:
@@ -552,7 +576,10 @@ const breweryPrompts = {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.reduce((allBeers, brewery) => {
+      allBeers += brewery.beers.length
+      return allBeers
+    }, 0);
     return result;
 
     // Annotation:
@@ -568,7 +595,12 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.map(brewery => {
+      return {
+        name: brewery.name,
+        beerCount: brewery.beers.length,
+      }
+    });
     return result;
 
     // Annotation:
@@ -579,8 +611,13 @@ const breweryPrompts = {
     // Return the beer which has the highest ABV of all beers
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
+    let allBeers = []
+    breweries.forEach(brewery => {
+      allBeers = allBeers.concat(brewery.beers)
+    });
+    allBeers.sort((a, b) => b.abv - a.abv)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = allBeers[0];
     return result;
 
     // Annotation:
@@ -627,8 +664,18 @@ const turingPrompts = {
     //  { name: 'Pam', studentCount: 21 },
     //  { name: 'Robbie', studentCount: 18 }
     // ]
+    let perInstructor = []
+     instructors.forEach(instructor => {
+       let mod = cohorts.find(cohort => cohort.module === instructor.module)
+       let teacherObj = {
+         name: instructor.name,
+         studentCount: mod.studentCount
+       }
+       perInstructor.push(teacherObj)
+     });
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+    const result = perInstructor;
     return result;
 
     // Annotation:
@@ -642,7 +689,13 @@ const turingPrompts = {
     // cohort1804: 10.5
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cohorts.reduce((allChorts, cohort) => {
+      let teachers = instructors.filter(instructor => instructor.module === cohort.module)
+
+      allChorts[`cohort${cohort.cohort}`] = (cohort.studentCount / teachers.length)
+      return allChorts
+    }, {})
+
     return result;
 
     // Annotation:
@@ -664,7 +717,20 @@ const turingPrompts = {
     //     Will: [1, 2, 3, 4]
     //   }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce((canTeach, instructor) => {
+      canTeach[instructor.name] = []
+      cohorts.forEach(cohort => {
+        cohort.curriculum.forEach(subject => {
+          let doesTeach = instructor.teaches.includes(subject);
+          let repeat = canTeach[instructor.name].includes(cohort.module);
+          if (doesTeach && !repeat) {
+            canTeach[instructor.name].push(cohort.module);
+          }
+        });
+      });
+
+      return canTeach;
+    }, {});
     return result;
 
     // Annotation:
@@ -675,13 +741,27 @@ const turingPrompts = {
     // Return an object where each key is a curriculum topic and each value is
     // an array of instructors who teach that topic e.g.:
     // {
+
     //   html: [ 'Travis', 'Louisa' ],
     //   css: [ 'Travis', 'Louisa' ],
     //   javascript: [ 'Travis', 'Louisa', 'Christie', 'Will' ],
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+
+    const result = instructors.reduce((courses, currentInstructor) => {
+      currentInstructor.teaches.forEach(course => {
+        if (!courses[course]) {
+          courses[course] =[]
+        }
+        if (!courses[course].includes(currentInstructor.name)) {
+          courses[course].push(currentInstructor.name)
+        }
+      });
+      return courses
+
+    }, {});
     return result;
 
     // Annotation:
@@ -715,8 +795,19 @@ const bossPrompts = {
     //   { bossName: 'Ursula', sidekickLoyalty: 20 },
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let bossRatings = [];
+    let bossesArr = Object.keys(bosses)
+    bossesArr.forEach(boss => {
+      let lackys = sidekicks.filter(sidekick => sidekick.boss.toLowerCase() === boss)
+      bossRatings.push({
+        bossName: lackys[0].boss,
+        sidekickLoyalty: lackys.reduce((loyalty, lacky) => {
+          loyalty += lacky.loyaltyToBoss
+          return loyalty
+        }, 0),
+      })
+    });
+    const result = bossRatings
     return result;
 
     // Annotation:
@@ -757,8 +848,14 @@ const astronomyPrompts = {
     //     lightYearsFromEarth: 640,
     //     color: 'red' }
     // ]
+    let arr =[]
+    let constellationsNames = Object.keys(constellations)
+    constellationsNames.forEach(constellation => {
+      let starsIn = stars.filter(star => star.constellation.toLowerCase() === constellation)
+      arr = arr.concat(starsIn)
+    });
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = arr;
     return result;
 
     // Annotation:
@@ -775,8 +872,15 @@ const astronomyPrompts = {
     //   orange: [{obj}],
     //   red: [{obj}]
     // }
+    let starsByColor = stars.reduce((colors, star) => {
+      if (!colors[star.color]) {
+        colors[star.color] = [];
+      }
+      colors[star.color].push(star);
+      return  colors
+    }, {});
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = starsByColor;
     return result;
 
     // Annotation:
@@ -796,9 +900,10 @@ const astronomyPrompts = {
     //    "The Plow",
     //    "Orion",
     //    "The Little Dipper" ]
-
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let shallowCopy = [...stars]
+    shallowCopy.sort((a, b) => a.visualMagnitude - b.visualMagnitude)
+    let ordered = shallowCopy.map(star => star.constellation)
+    const result = ordered.filter(constellation => constellation);
     return result;
 
     // Annotation:
@@ -829,7 +934,13 @@ const ultimaPrompts = {
     // Return the sum of the amount of damage for all the weapons that our characters can use
     // Answer => 113
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = characters.reduce((totalDmg, curentChar) => {
+      curentChar.weapons.forEach(weapon => {
+        totalDmg += weapons[weapon].damage
+      });
+
+      return totalDmg
+    }, 0);
     return result;
 
     // Annotation:
@@ -841,7 +952,19 @@ const ultimaPrompts = {
     // Return the sum damage and total range for each character as an object.
     // ex: [ { Avatar: { damage: 27, range: 24 }, { Iolo: {...}, ...}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = characters.map(character => {
+       let totalStats = character.weapons.reduce((totalStats, curentWepon) => {
+        totalStats.damage += weapons[curentWepon].damage;
+        totalStats.range += weapons[curentWepon].range;
+
+        return totalStats;
+      }, {
+        damage: 0,
+        range:0
+      });
+      return {[character.name]: totalStats,}
+    })
+
     return result;
 
     // Annotation:
